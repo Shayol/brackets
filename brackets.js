@@ -1,38 +1,39 @@
 function brackets(str) {
 
-    let result = false;
+    var br = "{[()]}";
+    var leftBr = "([{";
+    var rightBr = ")]}";
+    var arr = [...str];
 
-    result = checkBracket("(",")",str) && checkBracket("[","]",str) && checkBracket("{","}",str);
-    
-    function checkBracket(leftBracket, rightBracket, str) {
-        let arr = [...str];
-        let left = arr.reduce((acc, el, i) => {
-            if (el == leftBracket) {
-                acc.push(i);
-            }
-            return acc;
-        }, []);
-        let right = arr.reduce((acc, el, i) => {
-            if (el == rightBracket) {
-                acc.push(i);
-            }
-            return acc
-        }, []);
 
-        if (left.length != right.length) {
-            return false;
+    var list = arr.reduce((acc, el) => {
+        if (br.indexOf(el) != -1) {
+            acc.push(el)
         }
+        return acc;
+    }, []);
 
-        let leftSum = left.reduce((acc, el) => acc + el);
-        let rightSum = right.reduce((acc, el) => acc + el);
-
-        if (leftSum + left.length <= rightSum) {
-            return true;
-        }
-        return false;
+    if(list.length == 0) {
+        return true;
     }
-    return result;
+    var stack = [];
+
+    var nonPaired = list.some((el) => {
+        if(rightBr.indexOf(el) != -1) {
+            let left = stack.pop();
+            if(leftBr.indexOf(left) == rightBr.indexOf(el)) {
+                return false;
+            }
+            else {
+                return true
+            }
+        }
+        stack.push(el);
+        return false;
+    });
+
+    return !(stack.length > 0 || nonPaired);
 }
 
 console.log(brackets("[{(аа(б))}](сссс)"));
-console.log(brackets("(аааа{(б)}(сссс)]["));
+console.log(brackets("([)]"));
